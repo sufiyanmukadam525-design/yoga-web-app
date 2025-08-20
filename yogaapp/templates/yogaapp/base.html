@@ -107,19 +107,24 @@
 
       <!-- Plans Dropdown -->
        {% if user.is_authenticated %}
+        {% if user.is_staff or user.is_superuser %}
       <li class="nav-item dropdown" style="list-style: none; padding-left:35px;">
         <a class="nav-link dropdown-toggle" href="{% url 'plans' %}" id="plansDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
           Plans
         </a>
         <ul class="dropdown-menu" aria-labelledby="plansDropdown">
           <li><a class="dropdown-item" href="{% url 'plans' %}">View Plans</a></li>
-          {% if user.is_staff or user.is_superuser %}
+         
             <li><a class="dropdown-item" href="/admin/yogafeatures/yogaplan/add/">Add Plan</a></li>
             <li><a class="dropdown-item" href="/admin/yogafeatures/yogacourse/add/">Add Course</a></li>
             <li><a class="dropdown-item" href="/admin/yogafeatures/exercise/add/">Add Exercise</a></li>
-          {% endif %}
+
         </ul>
       </li>
+      {% else %}
+      <a class="nav-link custom-black ms-4" href="{% url 'plans' %}">Plan</a>
+      
+                {% endif %}
         {% endif %}
       <!-- Right side nav -->
       <ul class="navbar-nav ms-auto">

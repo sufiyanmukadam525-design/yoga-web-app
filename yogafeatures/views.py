@@ -32,3 +32,13 @@ def exercise_detail(request, exercise_id):
     else:
         form = ExerciseForm()
     return render(request, 'yogafeatures/exercise_detail.html', {'form': form})
+
+@login_required
+
+def course_list(request, plan_id):
+    plan = get_object_or_404(YogaPlan, id=plan_id)
+    courses = YogaCourse.objects.filter(plan=plan).order_by('order')
+    return render(request, "yogafeatures/course_list.html", {
+        "plan": plan,
+        "courses": courses
+    })

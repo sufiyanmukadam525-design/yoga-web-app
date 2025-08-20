@@ -10,9 +10,7 @@ class YogaPlan(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     plan_type = models.CharField(max_length=20, choices=PLAN_TYPE_CHOICES, default='Free')
-
- 
-
+    image = models.ImageField(upload_to="exercises/", blank=True, null=True)
     def __str__(self):
         return self.title
 
@@ -22,7 +20,7 @@ class YogaCourse(models.Model):
     title = models.CharField(max_length=200)
     duration_minutes = models.PositiveIntegerField(default=10)
     order = models.PositiveIntegerField(default=0)
-    
+    image = models.ImageField(upload_to="exercises/", blank=True, null=True)
     class Meta:
         ordering = ['order']  # Optional: default ordering in queries
 
@@ -37,7 +35,6 @@ class Exercise(models.Model):
     video_url = models.URLField(blank=True, null=True)
     minutes = models.PositiveIntegerField(default=10)  
     kcal = models.PositiveIntegerField(default=30)     
-
     course = models.ForeignKey('YogaCourse', related_name="exercises", on_delete=models.CASCADE)
 
     def __str__(self):

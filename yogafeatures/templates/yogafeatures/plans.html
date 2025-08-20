@@ -29,7 +29,7 @@
           <div class="plan-desc">{{ plan.description}}</div>
         </div>
         {% if plan.plan_type == 'Free' %}
-          <a href="{% url 'plan_detail' plan.id %}" class="btn btn-success">View Plan</a>
+          <a href="{% url 'course_list' plan.id %}" class="btn btn-success">View Plan</a>
         
         {% endif %}
       </div>
