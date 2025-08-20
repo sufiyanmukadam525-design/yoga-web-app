@@ -1,0 +1,178 @@
+{% extends "yogaapp/base.html" %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+
+{% block main %}
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(to bottom, #f0f9f8, #e0f3ea);
+    margin: 0;
+    padding: 0;
+  }
+
+  .profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 10px;
+  }
+
+  .profile-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  .profile-title {
+    text-align: center;
+    color: #2e8b57;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  .avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+  }
+
+  /* Text avatar */
+  .text-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: #2e8b57;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    margin: 0 auto 15px auto;
+    text-transform: uppercase;
+  }
+
+  .profile-details ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+  }
+
+  .profile-details li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+  }
+
+  .btn-main {
+    display: inline-block;
+    background: #2e8b57;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 15px;
+  }
+
+  .btn-main:hover {
+    background: #256b45;
+  }
+
+  .edit-form {
+    display: none;
+    margin-top: 20px;
+  }
+
+  form p {
+    margin: 12px 0;
+    font-size: 15px;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 6px;
+    font-size: 14px;
+  }
+
+  input[type="file"] {
+    padding: 5px;
+    background: #f8f8f8;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-card">
+    <h2 class="profile-title">My Profile</h2>
+
+    <!-- Profile View -->
+    <div id="profile-view">
+      <div class="text-center">
+        {% if profile.profile_photo %}
+          <img src="{{ profile.profile_photo.url }}" alt="Profile Photo" class="avatar">
+        {% else %}
+          <div class="text-avatar">
+            {{ user.username|slice:":2" }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="profile-details">
+        <ul>
+          <li><strong>Username:</strong> {{ user.username }}</li>
+          <li><strong>Email:</strong> {{ user.email }}</li>
+          {% if profile.bio %}<li><strong>Bio:</strong> {{ profile.bio }}</li>{% endif %}
+          {% if profile.age %}<li><strong>Age:</strong> {{ profile.age }}</li>{% endif %}
+          {% if profile.height %}<li><strong>Height:</strong> {{ profile.height }} cm</li>{% endif %}
+          {% if profile.weight %}<li><strong>Weight:</strong> {{ profile.weight }} kg</li>{% endif %}
+        </ul>
+      </div>
+
+      <div class="text-center mt-4">
+        <button class="btn-main" onclick="toggleEdit()">✏️ Edit Profile</button>
+      </div>
+    </div>
+
+    <!-- Profile Edit Form -->
+    <div id="profile-edit" class="edit-form">
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn-main">💾 Save Changes</button>
+        <button type="button" class="btn-main" style="background:#777;" onclick="toggleEdit()">❌ Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleEdit() {
+    const view = document.getElementById("profile-view");
+    const edit = document.getElementById("profile-edit");
+    if (view.style.display === "none") {
+      view.style.display = "block";
+      edit.style.display = "none";
+    } else {
+      view.style.display = "none";
+      edit.style.display = "block";
+    }
+  }
+</script>
+{% endblock %}

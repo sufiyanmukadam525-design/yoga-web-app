@@ -1,0 +1,171 @@
+{% extends "yogaapp/base.html" %}
+{% load static %}
+{% block title %}Meditate{% endblock %}
+{% block main %}
+<style>
+  body {
+    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 30px;
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: fadeIn 1.2s ease;
+  }
+  h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #3f3d56;
+  }
+  .subtext {
+    color: #5f5d72;
+    font-size: 0.95rem;
+  }
+  .inputs {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .inputs input {
+    width: 90px;
+    padding: 10px;
+    font-size: 1.1rem;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.4);
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+  }
+  .timer {
+    font-size: 72px;
+    font-weight: 800;
+    color: #3f3d56;
+    margin: 20px 0;
+    letter-spacing: 2px;
+  }
+  .btn {
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  }
+  .btn.primary {
+    background: linear-gradient(135deg, #6b61ff, #8a85ff);
+    color: #fff;
+  }
+  .btn.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  }
+  .btn.ghost {
+    background: rgba(255,255,255,0.7);
+    color: #3f3d56;
+  }
+  .btn.ghost:hover {
+    background: rgba(255,255,255,0.9);
+  }
+  .music-box {
+    text-align: left;
+    background: rgba(255,255,255,0.6);
+    padding: 18px;
+    border-radius: 16px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  .music-box select {
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    margin-right: 8px;
+  }
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(10px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+</style>
+
+<div class="wrap">
+  <h2>Meditation Timer</h2>
+  <div class="subtext">Pick your time & press Start</div>
+
+  <div class="inputs">
+    <input id="min" type="number" min="0" value="10">
+    <input id="sec" type="number" min="0" max="59" value="0">
+  </div>
+
+  <div class="timer" id="display">10:00</div>
+
+  <div style="margin-bottom:14px;">
+    <button class="btn primary" id="start">Start</button>
+    <button class="btn ghost" id="pause">Pause</button>
+    <button class="btn ghost" id="reset">Reset</button>
+  </div>
+
+  <div class="music-box">
+    <div style="color:#6f73a1; font-weight:600;">Background Music</div>
+    <audio id="player" controls style="width:100%; margin-top:6px;">
+      <source src="{% static 'progress/audio/focus1.mp3' %}" type="audio/mpeg">
+      Your browser does not support the audio element.
+    </audio>
+    <div style="margin-top:8px;">
+      <select id="track">
+        <option value="{% static 'progress/audio/focus1.mp3' %}">Focus 1</option>
+        <option value="{% static 'progress/audio/focus2.mp3' %}">Focus 2</option>
+        <option value="{% static 'progress/audio/focus3.mp3' %}">Focus 3</option>
+      </select>
+      <button id="toggleMusic" class="btn ghost">Play / Pause</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const min = document.getElementById('min'), sec = document.getElementById('sec'), display = document.getElementById('display');
+  const start = document.getElementById('start'), pause = document.getElementById('pause'), reset = document.getElementById('reset');
+  const trackSel = document.getElementById('track'), player = document.getElementById('player'), toggleMusic = document.getElementById('toggleMusic');
+
+  let remaining = (+min.value)*60 + (+sec.value);
+  let timer = null;
+
+  function fmt(s){ const m = Math.floor(s/60).toString().padStart(2,'0'); const r = (s%60).toString().padStart(2,'0'); return m+':'+r; }
+  function render(){ display.textContent = fmt(remaining); }
+
+  function beep(){
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = ctx.createOscillator(); const g = ctx.createGain();
+      o.type = 'sine'; o.frequency.value = 880; o.connect(g); g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.0001, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.5, ctx.currentTime + 0.01);
+      o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, 500);
+    } catch(e){ /* ignore */ }
+  }
+
+  function finish(){ beep(); setTimeout(beep,600); setTimeout(beep,1200); if (!player.paused) player.pause(); }
+
+  function tick(){ if (remaining <= 0) { clearInterval(timer); timer = null; finish(); return; } remaining -=1; render(); }
+  function resetToInputs(){ remaining = (+min.value)*60 + (+sec.value); render(); }
+
+  start.addEventListener('click', () => { resetToInputs(); if (timer) clearInterval(timer); timer = setInterval(tick, 1000); });
+  pause.addEventListener('click', () => { if (timer) { clearInterval(timer); timer = null; } else { timer = setInterval(tick,1000); } });
+  reset.addEventListener('click', ()=>{ if(timer) { clearInterval(timer); timer=null; } resetToInputs(); });
+
+  trackSel.addEventListener('change', function(){ player.src = this.value; player.play(); });
+  toggleMusic.addEventListener('click', ()=>{ if (player.paused) player.play(); else player.pause(); });
+
+  render();
+})();
+</script>
+{% endblock %}

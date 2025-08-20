@@ -1,0 +1,201 @@
+{% extends "yogaapp/base.html" %}
+{% load static %}
+{% block title %}Progress{% endblock %}
+
+{% block main %}
+<style>
+  :root {
+    --accent: #6b61ff;
+    --muted: #6f73a1;
+    --bg-light: #f7f8fc;
+    --card-bg: #ffffff;
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  }
+  body {
+    background: var(--bg-light);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  .wrap {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 12px;
+  }
+  .card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    background: var(--accent);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(107, 97, 255, 0.3);
+  }
+  .stats-container {
+    padding: 20px;
+    background: linear-gradient(to bottom right, #ffffff, #f2f4ff);
+    border-radius: 14px;
+  }
+  h2, h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-size: 1.8rem;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+    font-size: 14px;
+    overflow: hidden;
+    border-radius: 10px;
+  }
+  table th, table td {
+    padding: 10px;
+    text-align: center;
+  }
+  table th {
+    background: var(--accent);
+    color: white;
+    font-weight: 500;
+  }
+  table tr:nth-child(even) {
+    background: #f6f7ff;
+  }
+  table tr:hover {
+    background: #ecebff;
+  }
+  .progress-wrapper {
+    height: 10px;
+    background: #eee;
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease-in-out;
+  }
+</style>
+
+<div class="wrap">
+  <!-- Top Card -->
+  <div class="card row">
+    <div>
+      <h2>Your Progress</h2>
+      <div style="color:var(--muted)">Small steps every day make a big difference</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="card">
+    <canvas id="chart" style="width:100%; height:240px;"></canvas>
+  </div>
+
+  <!-- Course Progress -->
+  <div class="card">
+    <h3>Courses</h3>
+    {% if course_rows %}
+      {% for cp in course_rows %}
+        <div style="margin-bottom:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <strong>{{ cp.course.title }}</strong>
+              <div style="color:var(--muted); font-size:13px;">{{ cp.percent_complete }}% complete</div>
+            </div>
+            <div class="pill">{{ cp.updated_at|date:"M d" }}</div>
+          </div>
+          <div class="progress-wrapper">
+            <div class="progress-bar" style="width: {{ cp.percent_complete }}%;"></div>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="color:var(--muted)">No progress yet — complete an exercise to see progress here.</div>
+    {% endif %}
+  </div>
+
+  <!-- Daily Stats -->
+  <div class="card stats-container">
+    <h3>Daily Stats</h3>
+    <p style="font-weight:500; color:var(--muted);">
+      🏋️ Workouts: {{ total_workouts }} &nbsp;|&nbsp; ⏱️ Minutes: {{ total_minutes }} &nbsp;|&nbsp; 🔥 Calories: {{ total_calories }}
+    </p>
+    <table>
+      <tr>
+        <th>Date</th>
+        <th>Minutes</th>
+        <th>Calories</th>
+        <th>Workouts</th>
+      </tr>
+      {% for d in last7 %}
+      <tr>
+        <td>{{ d.date }}</td>
+        <td>{{ d.minutes }}</td>
+        <td>{{ d.calories }}</td>
+        <td>{{ d.workouts }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4">No daily stats recorded yet</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+(async function(){
+  const res = await fetch("{% url 'progress:stats_series' %}");
+  const data = await res.json();
+  const series = data.last7.length ? data.last7 : data.last30 || [];
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: series.map(s => s.d.slice(5)),
+      datasets: [{
+        label: 'Minutes',
+        data: series.map(s => s.min),
+        tension: 0.3,
+        borderWidth: 2,
+        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent'),
+        backgroundColor: 'rgba(107,97,255,0.15)',
+        fill: true,
+        pointBackgroundColor: '#fff',
+        pointBorderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent'),
+        pointBorderWidth: 2,
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{ y:{beginAtZero:true} }
+    }
+  });
+})();
+</script>
+{% endblock %}

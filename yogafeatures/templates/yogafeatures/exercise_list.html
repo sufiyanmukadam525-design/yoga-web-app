@@ -1,0 +1,71 @@
+{% extends 'yogaapp/base.html' %}
+{% block title %}Exercises{% endblock %}
+
+{% block main %}
+<style>
+  .exercise-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .exercise-item {
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+  }
+  .exercise-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  .btn-video {
+    display: inline-block;
+    margin-top: 10px;
+    background: #ff6b6b;
+    padding: 8px 12px;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .btn-progress {
+    margin-top: 10px;
+    background: #6b61ff;
+    padding: 8px 12px;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+<h1>Exercises</h1>
+
+<div class="exercise-container">
+{% for exercise in exercises %}
+  <div class="exercise-item">
+    {% if exercise.image %}
+      <img src="{{ exercise.image.url }}" alt="Exercise Image" class="exercise-img">
+    {% endif %}
+    <div class="exercise-name"><strong>{{ exercise.title|default:"Untitled Exercise" }}</strong></div>
+    <div class="exercise-desc">{{ exercise.description|default:"No description for this exercise." }}</div>
+    
+    {% if exercise.video_url %}
+      <a href="{{ exercise.video_url }}" target="_blank" class="btn-video">▶ Watch Video</a>
+    {% endif %}
+
+    <form method="post" action="{% url 'progress:complete_exercise' exercise.id %}">
+      {% csrf_token %}
+      <input type="hidden" name="minutes" value="{{ exercise.minutes|default:12 }}">
+      <input type="hidden" name="kcal" value="{{ exercise.calories|default:40 }}">
+      <button type="submit" class="btn-progress">✔ Mark as Done</button>
+    </form>
+  </div>
+{% empty %}
+  <p style="grid-column: 1/-1; text-align: center; color: #777;">No exercises for this course yet.</p>
+{% endfor %}
+</div>
+{% endblock %}

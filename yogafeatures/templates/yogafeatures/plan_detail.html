@@ -1,0 +1,124 @@
+
+{% extends 'yogaapp/base.html' %}
+{% block main %}
+<style>
+  .plan-detail-section {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #f8f9fa;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    padding: 32px 28px;
+  }
+  .plan-header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .plan-title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 10px;
+  }
+  .plan-desc {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 0;
+  }
+  .course-list {
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .course-item {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    padding: 22px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #eaeaea;
+    transition: box-shadow 0.2s;
+  }
+  .course-item:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  .course-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #007bff;
+    margin-bottom: 8px;
+  }
+  .course-desc {
+    font-size: 1rem;
+    color: #444;
+    margin-bottom: 10px;
+  }
+  .btn-video {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 18px;
+    background: linear-gradient(90deg, #17a2b8 60%, #007bff 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(23,162,184,0.08);
+    transition: background 0.2s;
+  }
+  .btn-video:hover {
+    background: linear-gradient(90deg, #007bff 60%, #17a2b8 100%);
+  }
+</style>
+
+<section class="plan-detail-section" style="border: 2px solid #007bff; box-sizing: border-box;">
+  <div class="plan-header" style="display: flex; align-items: flex-start; gap: 32px;">
+    <div class="plan-image" style="flex: 0 0 180px;">
+      <img src="https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?cs=srgb&dl=pexels-prasanthinturi-1051838.jpg&fm=jpg" alt="Plan Image" style="width: 180px; height: 180px; object-fit: cover; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+    </div>
+    <div style="flex: 1;">
+      <div class="plan-title">{{ plan.title|default:"Untitled Plan" }}</div>
+      <p class="plan-desc">{{ plan.description|default:"No description available for this plan." }}</p>
+      <div class="plan-images-list" style="margin-top: 18px;">
+        <div style="font-weight: 600; color: #555; margin-bottom: 8px;">Related Images:</div>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <img src="https://images.pexels.com/photos/3822622/pexels-photo-3822622.jpeg" alt="Yoga Image 1" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+          <img src="https://images.pexels.com/photos/317157/pexels-photo-317157.jpeg" alt="Yoga Image 2" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+          <img src="https://images.pexels.com/photos/290817/pexels-photo-290817.jpeg" alt="Yoga Image 3" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+        </div>
+        <div style="margin-top: 16px;">
+          {% if plan.courses.all %}
+            {% with first_course=plan.courses.all.0 %}
+              <a href="{% url 'exercise_list' first_course.id %}" class="btn-video" style="background: linear-gradient(90deg, #28a745 60%, #007bff 100%); font-size: 1.1rem; padding: 10px 28px;">Apply for Plan</a>
+            {% endwith %}
+          {% else %}
+            <button class="btn-video" style="background: linear-gradient(90deg, #6c757d 60%, #343a40 100%); font-size: 1.1rem; padding: 10px 28px;" disabled>No courses available</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="course-list">
+    {% for course in courses %}
+    <div class="course-item">
+      <div class="course-title">{{ course.title|default:"Untitled Course" }}</div>
+      <div class="course-desc">{{ course.description|default:"No description for this course." }}</div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        {% if course.video_url %}
+          <a href="{{ course.video_url }}" target="_blank" class="btn-video">Watch Video</a>
+        {% endif %}
+        <a href="#" class="btn-video" style="background: linear-gradient(90deg, #28a745 60%, #007bff 100%);">Apply</a>
+      </div>
+    </div>
+    {% empty %}
+    <p style="grid-column: 1/-1; text-align: center; color: #777;">No courses in this plan yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

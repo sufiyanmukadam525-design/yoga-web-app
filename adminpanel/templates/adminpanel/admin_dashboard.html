@@ -1,0 +1,151 @@
+{% extends 'yogaapp/base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block main %}
+<style>
+  /* Dashboard Container */
+  .dashboard-container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: auto;
+  }
+
+  /* Page Heading */
+  .dashboard-title {
+    font-size: 30px;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  /* Stats Row */
+  .stat-card {
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    border-radius: 16px;
+    padding: 25px 20px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    text-align: center;
+  }
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+  }
+  .stat-card h5 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 12px;
+  }
+  .stat-card p {
+    font-size: 26px;
+    font-weight: 800;
+    color: #1abc9c;
+    margin: 0;
+  }
+
+  /* Action Buttons */
+  .dashboard-actions {
+    margin: 35px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .dashboard-actions .btn {
+    border-radius: 10px;
+    padding: 12px 22px;
+    font-weight: 600;
+    font-size: 15px;
+    transition: all 0.3s ease;
+  }
+  .dashboard-actions .btn:hover {
+    transform: translateY(-2px);
+  }
+  .btn-add {
+    background: #1abc9c;
+    color: #fff !important;
+    border: none;
+  }
+  .btn-add:hover {
+    background: #16a085;
+  }
+
+  /* Announcements Section */
+  .announcements-section {
+    margin-top: 40px;
+  }
+  .announcements-section h4 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  .announcement-item {
+    background: #ffffff;
+    padding: 15px 18px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border-left: 5px solid #1abc9c;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+  }
+  .announcement-item strong {
+    color: #2c3e50;
+    font-size: 16px;
+  }
+  .announcement-meta {
+    font-size: 13px;
+    color: #7f8c8d;
+    margin-top: 4px;
+  }
+</style>
+
+<div class="dashboard-container">
+  <h2 class="dashboard-title">📊 Admin Dashboard</h2>
+
+  <!-- Stats Row -->
+  <div class="row g-4">
+    <div class="col-md-4">
+      <div class="stat-card">
+        <h5>Total Users</h5>
+        <p>{{ total_users }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <h5>Active Admins</h5>
+        <p>{{ total_admins }}</p>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="stat-card">
+        <h5>Announcements</h5>
+        <p>{{ total_announcements }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="dashboard-actions">
+    <a class="btn btn-outline-primary" href="{% url 'adminpanel:user_mgmt' %}">👤 Manage Users</a>
+    <a class="btn btn-outline-secondary" href="{% url 'adminpanel:content' %}">📢 Announcements</a>
+    <a class="btn btn-outline-dark" href="{% url 'adminpanel:reports' %}">📑 Reports</a>
+    <a class="btn btn-add" href="#">➕ Add Plan</a>
+  </div>
+
+  <!-- Announcements -->
+  <div class="announcements-section">
+    <h4>📰 Latest Announcements</h4>
+    {% for a in latest_announcements %}
+      <div class="announcement-item">
+        <strong>{{ a.title }}</strong>
+        <div class="announcement-meta">
+          {{ a.created_at|date:"Y-m-d H:i" }} by {{ a.created_by }}
+        </div>
+      </div>
+    {% empty %}
+      <p style="color: #7f8c8d;">No announcements yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

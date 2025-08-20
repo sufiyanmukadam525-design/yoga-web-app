@@ -1,0 +1,159 @@
+{% extends 'yogaapp/base.html' %}
+{% block title %}User Management{% endblock %}
+{% block main %}
+
+<style>
+  .user-mgmt-container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 25px;
+  }
+
+  .page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  /* Form Card */
+  .form-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 30px;
+  }
+  .form-card label {
+    font-weight: 600;
+    color: #34495e;
+  }
+  .form-card input, .form-card select, .form-card textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+  }
+  .form-card button {
+    background: #3498db;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .form-card button:hover {
+    background: #2980b9;
+  }
+
+  /* Table Styling */
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .styled-table thead {
+    background: #1abc9c;
+    color: #fff;
+    font-size: 15px;
+  }
+  .styled-table th, .styled-table td {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 14px;
+  }
+  .styled-table tbody tr {
+    border-bottom: 1px solid #eee;
+    transition: background 0.2s;
+  }
+  .styled-table tbody tr:hover {
+    background: #f9f9f9;
+  }
+  .styled-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  /* User list */
+  .user-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 0;
+    list-style: none;
+  }
+  .user-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    font-size: 14px;
+    color: #2c3e50;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .user-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+  }
+  .user-card strong {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+  .user-card small {
+    color: #7f8c8d;
+  }
+</style>
+
+<div class="user-mgmt-container">
+  <h2 class="page-title">👥 User Management</h2>
+
+  <!-- Role Assignment Form -->
+  <div class="form-card">
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Assign Role</button>
+    </form>
+  </div>
+
+  <!-- Current Admins -->
+  <h4>🔑 Current Admins</h4>
+  <table class="styled-table">
+    <thead>
+      <tr><th>User</th><th>Role</th><th>Active</th></tr>
+    </thead>
+    <tbody>
+      {% for a in admins %}
+        <tr>
+          <td>{{ a.user.username }}</td>
+          <td>{{ a.role }}</td>
+          <td>{{ a.is_active }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No admins yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Some Users -->
+  <h4>👤 Some Users</h4>
+  <ul class="user-list">
+    {% for u in users %}
+      <li class="user-card">
+        <strong>{{ u.username }}</strong>
+        <small>{{ u.email }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+
+{% endblock %}
