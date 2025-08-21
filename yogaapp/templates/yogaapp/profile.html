@@ -1,0 +1,271 @@
+{% extends "yogaapp/base.html" %}
+
+{% block title %}Profile & Dashboard{% endblock %}
+
+{% block main %}
+<style>
+  body {
+    background: linear-gradient(to right, #f0fdf4, #e0f7fa);
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+  }
+
+  .page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 20px 50px;
+  }
+
+  /* Profile Section */
+  .profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 40px 30px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+  }
+
+  .profile-left {
+    text-align: center;
+    flex: 1;
+  }
+
+  .profile-pic {
+    width: 170px;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid #00bfa5;
+    box-shadow: 0 6px 20px rgba(0, 191, 165, 0.25);
+    margin-bottom: 15px;
+    transition: transform 0.3s;
+  }
+
+  .profile-pic:hover { transform: scale(1.05); }
+
+  .profile-center {
+    flex: 2;
+    text-align: center;
+  }
+
+  .profile-center h2 {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-bottom: 8px;
+    color: #004d40;
+  }
+
+  .profile-center p { color: #666; font-size: 1rem; line-height: 1.6; }
+
+  .profile-right {
+    flex: 2;
+    text-align: left;
+  }
+
+  .profile-right ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    font-size: 1rem;
+  }
+
+  .profile-right ul li {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+  }
+
+  .profile-right i {
+    color: #00bfa5;
+    font-size: 1.2rem;
+  }
+
+  .edit-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #00bfa5, #009e88);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 32px;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(0, 191, 165, 0.25);
+  }
+
+  .edit-btn:hover {
+    background: linear-gradient(135deg, #009e88, #007f6f);
+    transform: translateY(-2px);
+  }
+
+  /* Welcome Section */
+  .welcome-section {
+    background: linear-gradient(135deg, #00bfa5, #009e88);
+    color: white;
+    padding: 30px 25px;
+    border-radius: 20px;
+    margin-bottom: 35px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  }
+
+  .welcome-section h2 { font-size: 1.8rem; }
+
+  /* Stats */
+  .stat-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 35px;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+  }
+
+  .stat-card h3 {
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #00bfa5;
+  }
+
+  .stat-card p { font-size: 1rem; color: #666; }
+
+  .stat-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 191, 165, 0.15);
+  }
+
+  /* Explore Cards */
+  .explore-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 35px 25px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: 0.3s ease;
+  }
+
+  .explore-card h5 {
+    font-size: 1.3rem;
+    margin-bottom: 14px;
+    color: #004d40;
+    font-weight: 600;
+  }
+
+  .explore-card p { color: #666; font-size: 0.95rem; }
+
+  .explore-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 8px 20px rgba(0, 191, 165, 0.15);
+  }
+
+  /* Dashboard Title */
+  .dashboard-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #004d40;
+    margin-bottom: 20px;
+  }
+
+  /* Responsive */
+  @media (max-width: 992px) {
+    .profile-section {
+      flex-direction: column;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .profile-right { text-align: center; }
+  }
+</style>
+
+<div class="page-wrapper mt-5">
+  <!-- Profile Section -->
+  <div class="profile-section">
+    <div class="profile-left">
+      {% if profile.profile_photo %}
+        <img src="{{ profile.profile_photo.url }}" alt="Profile Picture" class="profile-pic">
+      {% else %}
+        <img src="https://via.placeholder.com/180" alt="Profile Picture" class="profile-pic">
+      {% endif %}
+    </div>
+
+    <div class="profile-center">
+      <h2>{{ user.username }}</h2>
+      <p>{{ profile.bio|default:"No bio yet..." }}</p>
+    </div>
+
+    <div class="profile-right">
+      <ul>
+        <li><i class="bi bi-envelope-fill"></i><strong>Email:</strong> {{ user.email }}</li>
+        <li><i class="bi bi-rulers"></i><strong>Height:</strong> {{ profile.height }} cm</li>
+        <li><i class="bi bi-speedometer2"></i><strong>Weight:</strong> {{ profile.weight }} kg</li>
+        <li><i class="bi bi-calendar-heart"></i><strong>Age:</strong> {{ profile.age }}</li>
+      </ul>
+      <a href="{% url 'profile_edit' %}" class="edit-btn">Edit Profile</a>
+    </div>
+  </div>
+
+  <!-- Welcome Section -->
+  <div class="welcome-section shadow-sm">
+    <h2 class="fw-bold">Welcome back, {{ user.username }} 🌸</h2>
+    <p class="mb-0">Find peace, balance, and energy in every breath. 🌿</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="row text-center mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="stat-card">
+        <h3 class="fw-bold">{{ user.profile.sessions_completed }}</h3>
+        <p>Sessions Completed</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="stat-card">
+        <h3 class="fw-bold">{{ user.profile.total_practice_time }}</h3>
+        <p>Total Practice</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="stat-card">
+        <h3 class="fw-bold">{{ user.profile.goal_progress }}%</h3>
+        <p>Goal Progress</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Explore Dashboard -->
+  <h4 class="dashboard-title mb-3">Explore Your Dashboard</h4>
+  <div class="row text-center">
+    <div class="col-md-4 mb-3">
+      <div class="explore-card">
+        <h5><a href="{% url 'plans' %}">Your Plans</a></h5>
+        <p>View and manage your yoga routines.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="explore-card">
+        <h5><a href="{% url 'progress:progress_tracker' %}">Progress Tracker</a></h5>
+        <p>Track your daily yoga achievements.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="explore-card">
+        <h5>Mindfulness Tips</h5>
+        <p>Daily tips to stay balanced & calm.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

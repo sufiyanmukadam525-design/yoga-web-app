@@ -1,0 +1,76 @@
+{% extends 'yogaapp/base.html' %}
+{% block title %}Exercises{% endblock %}
+
+{% block main %}
+<style>
+  .exercise-card {
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+  }
+  .exercise-card:hover {
+    transform: translateY(-5px);
+  }
+  .exercise-img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  .exercise-body {
+    padding: 15px;
+  }
+  .btn-video {
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: 10px;
+    background: #ff6b6b;
+    padding: 8px 14px;
+    color: #fff;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .btn-progress {
+    margin-top: 10px;
+    background: #6b61ff;
+    padding: 8px 14px;
+    color: #fff;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+</style>
+
+<div class="container mt-4">
+  <h1 class="text-center mb-4">Exercises</h1>
+
+  <div class="row">
+    {% for exercise in exercises %}
+      <div class="col-md-4 mb-4">
+        <div class="card exercise-card h-100">
+          {% if course.image %}
+            <img src="{{ course.image.url }}" alt="Exercise Image" class="exercise-img card-img-top">
+          {% endif %}
+          <div class="exercise-body">
+            <h5 class="card-title">{{ exercise.title|default:"Untitled Exercise" }}</h5>
+            <p class="card-text text-muted">{{ exercise.description|default:"No description for this exercise." }}</p>
+
+            {% if exercise.video_url %}
+              <a href="{{ exercise.video_url }}" target="_blank" class="btn-video">▶ Watch Video</a>
+            {% endif %}
+
+            <form method="post" action="{% url 'progress:complete_exercise' exercise.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="minutes" value="{{ exercise.minutes|default:12 }}">
+              <input type="hidden" name="kcal" value="{{ exercise.calories|default:40 }}">
+              <button type="submit" class="btn-progress">✔ Mark as Done</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center text-muted">No exercises for this course yet.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

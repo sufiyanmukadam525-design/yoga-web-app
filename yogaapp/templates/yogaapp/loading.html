@@ -1,0 +1,338 @@
+{% extends 'yogaapp/base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block main %}
+<style>
+  body, .features, .reviews .bg-white, .feature-card {
+    background-color: #ffffff; /* exact same white across page */
+}
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f8fdfb;
+    margin: 0;
+    padding: 0;
+    color: #2c3e50;
+  }
+
+  /* Hero Section */
+  .hero {
+    position: relative;
+    width: 100vw;
+    height: 90vh;
+    background: url("https://cdn.mos.cms.futurecdn.net/Q2UmKebkQdnWcT32Dg9LkV.jpg") no-repeat center center/cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 20px;
+  }
+  .hero-content h1 {
+    font-size: 52px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .hero-content p {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+  .hero-content .btn-main {
+    margin: 8px;
+    padding: 14px 28px;
+    font-size: 16px;
+    border-radius: 30px;
+    background-color: #128C7E;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  .hero-content .btn-main:hover {
+    background-color: #0F6D63;
+  }
+  .hero-content .btn-outline {
+    margin: 8px;
+    padding: 14px 28px;
+    font-size: 16px;
+    border-radius: 30px;
+    border: 2px solid white;
+    color: white;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+  .hero-content .btn-outline:hover {
+    background: white;
+    color: #128C7E;
+  }
+
+  /* Features Section */
+  .features {
+    background-color: #fff;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  .features h2 {
+    font-size: 30px;
+    font-weight: bold;
+    color: #128C7E;
+    margin-bottom: 40px;
+  }
+  .feature-card {
+    padding: 25px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+  }
+  .feature-card h4 {
+    color: #128C7E;
+    margin-top: 15px;
+    font-size: 20px;
+  }
+
+  /* Reviews Section */
+  .reviews h5 {
+    color: #128C7E;
+  }
+  .reviews .shadow {
+    border: 1px solid #eaeaea;
+  }
+
+  /* Recommended By Section */
+  .recommended h5 {
+    color: #128C7E;
+  }
+  .recommended .btn {
+    background-color: #f7a99c;
+    color: white;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+  }
+  .recommended .btn:hover {
+    background-color: #e38a7a;
+  }
+
+  /* About Us Section */
+  .about {
+    background: linear-gradient(to right, #128C7E, #0F6D63);
+    color: white;
+    padding: 80px 20px;
+    text-align: center;
+  }
+  .about h2 {
+    font-size: 34px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .about p {
+    max-width: 800px;
+    margin: auto;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+</style>
+
+<!-- Hero Section -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Welcome to Serenity Yoga</h1>
+    <p>Your journey to a healthier mind and body starts here. Discover personalized yoga plans, track your progress, and connect with a mindful community.</p>
+    <a href="{% url 'signup' %}" class="btn-main text-decoration-none">Get Started</a>
+    <a href="{% url 'login' %}" class="btn-outline text-decoration-none">Login</a>
+  </div>
+</section>
+
+<!-- Add below your navbar in loading.html -->
+
+<style>
+.yoga-classes-section {
+  background: #f8fdfb;
+  padding: 48px 0 32px 0;
+  text-align: center;
+}
+.yoga-classes-section h2 {
+  color: #128C7E;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.yoga-classes-section p {
+  color: #2c3e50;
+  font-size: 1.1rem;
+  margin-bottom: 32px;
+}
+.yoga-class-cards {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+.yoga-class-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  width: 300px;
+  padding: 24px;
+  text-align: left;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.yoga-class-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+.yoga-class-card img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 16px;
+}
+.yoga-class-card h4 {
+  font-size: 1.15rem;
+  color: #128C7E;
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+.yoga-class-card .teacher {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+.yoga-class-card .details {
+  font-size: 0.95rem;
+  color: #888;
+  margin-top: 8px;
+}
+</style>
+
+<section class="yoga-classes-section">
+  <h2>Classes for every level and need</h2>
+  <p>
+    Whether you’re a beginner or long-term practitioner, whether you just want to move your body or learn how it moves, you're welcome just as you are.
+  </p>
+  <div class="yoga-class-cards">
+    <div class="yoga-class-card">
+      <img src="https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=600&q=80" alt="Meditation Class">
+      <div class="teacher">Esther Ekhart</div>
+      <h4>Unhook from worry and embrace inner peace</h4>
+      <div class="details">22 min. | Level: all | Meditation</div>
+    </div>
+    <div class="yoga-class-card">
+      <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80" alt="Vinyasa Flow">
+      <div class="teacher">David Kam</div>
+      <h4>3 in 1 practice</h4>
+      <div class="details">50 min. | Level: 1-2 | Vinyasa Flow</div>
+    </div>
+    <div class="yoga-class-card">
+      <img src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" alt="Hatha Flow">
+      <div class="teacher">Tashi Dawa</div>
+      <h4>Perfect 45 Flow</h4>
+      <div class="details">46 min. | Level: all | Hatha</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <h2>Why Choose Serenity Yoga?</h2>
+  <div class="row g-4 justify-content-center">
+    <div class="col-md-3">
+      <div class="feature-card">
+        <img src="https://img.icons8.com/ios-filled/50/128C7E/lotus.png" alt="Icon">
+        <h4>Mindfulness</h4>
+        <p>Learn meditation techniques that help you stay calm and focused in daily life.</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="feature-card">
+        <img src="https://img.icons8.com/ios-filled/50/128C7E/exercise.png" alt="Icon">
+        <h4>Flexibility</h4>
+        <p>Improve your posture and flexibility with guided yoga sessions for all levels.</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="feature-card">
+        <img src="https://img.icons8.com/ios-filled/50/128C7E/heart-with-pulse.png" alt="Icon">
+        <h4>Wellness</h4>
+        <p>Boost your overall health with yoga plans tailored to your body and goals.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="py-5 bg-light reviews">
+  <div class="container text-center">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="p-4 bg-white shadow rounded-3 h-100">
+          <div class="text-warning fs-4">★★★★★</div>
+          <h5 class="fw-bold mt-3">A HEALTHY CHOICE</h5>
+          <p class="fst-italic">“Subscribing to your platform has been the best choice for my mental, spiritual and physical health”</p>
+          <p class="fw-semibold mb-0">Melissa</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white shadow rounded-3 h-100">
+          <div class="text-warning fs-4">★★★★★</div>
+          <h5 class="fw-bold mt-3">WHAT REALLY MATTERS</h5>
+          <p class="fst-italic">“You make me feel okay that I wobble a bit and help me remember why I love yoga”</p>
+          <p class="fw-semibold mb-0">Sam</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="p-4 bg-white shadow rounded-3 h-100">
+          <div class="text-warning fs-4">★★★★★</div>
+          <h5 class="fw-bold mt-3">CAN’T STOP RECOMMENDING</h5>
+          <p class="fst-italic">“I’ve lost count of the number of times I’ve recommended this online studio to others”</p>
+          <p class="fw-semibold mb-0">Carole</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Recommended By Section -->
+<section class="py-5 text-center recommended">
+  <div class="container">
+    <h5 class="fw-bold mb-4">Recommended by:</h5>
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-4 mb-4">
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Grazia" alt="Grazia" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Vital" alt="Vital" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Jolie" alt="Jolie" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Petra" alt="Petra" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Flow" alt="Flow" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Emotion" alt="Emotion" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=YogaJournal" alt="Yoga Journal" class="img-fluid" />
+      <img src="https://dummyimage.com/100x40/ccc/000&text=Fursie" alt="Fursie" class="img-fluid" />
+    </div>
+    <a href="#" class="btn btn-lg px-4 text-decoration-none">Start free trial</a>
+  </div>
+</section>
+
+<!-- About Us Section -->
+<section class="about">
+  <h2>About Serenity Yoga</h2>
+  <p>
+    Serenity Yoga is more than just an app — it's a community built on mindfulness, wellness, 
+    and personal growth. Our mission is to make yoga accessible for everyone, regardless of 
+    experience level. With guided classes, meditation practices, and wellness plans, 
+    we help you connect mind, body, and soul on your journey to balance and peace.
+  </p>
+</section>
+{% endblock %}
