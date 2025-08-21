@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import UserRegistrationForm, UserLoginForm, ProfileForm
 from .models import Profile, RegisteredUser
 
+
 class Register(View):
     def get(self, request):
         form = UserRegistrationForm()
@@ -33,6 +34,7 @@ class Register(View):
             return redirect('login')
         return render(request, 'yogaapp/signup.html', {'form': form})
 
+
 class Login(View):
     def get(self, request):
         form = UserLoginForm()
@@ -50,11 +52,13 @@ class Login(View):
             messages.error(request, 'Invalid credentials.')
         return render(request, 'yogaapp/login.html', {'form': form})
 
+
 class Logout(View):
     def get(self, request):
         logout(request)
         messages.info(request, 'Logged out.')
         return redirect('login')
+
 
 class HomeView(View):
     def get(self, request):
@@ -62,6 +66,7 @@ class HomeView(View):
             return render(request, 'yogaapp/home.html')
         else:
             return render(request, 'yogaapp/loading.html')
+
 
 @login_required
 def profile_view(request):
@@ -81,10 +86,10 @@ def profile_view(request):
         "form": form
     })
 
+
 class Base(View):
     def get(self, request):
         return render(request, 'yogaapp/base.html')
-<<<<<<< HEAD
 
 
 class ProfileEdit(View):
@@ -105,5 +110,3 @@ class ProfileEdit(View):
         return render(request, "yogaapp/profile_edit.html", {
             "form": form
         })
-=======
->>>>>>> 378cfd2d643889c1b7f817a9487d8e62135be505
