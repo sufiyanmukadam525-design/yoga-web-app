@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 378cfd2d643889c1b7f817a9487d8e62135be505
 User = get_user_model()
 
 class AdminProfile(models.Model):
@@ -34,5 +37,8 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.title
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 378cfd2d643889c1b7f817a9487d8e62135be505

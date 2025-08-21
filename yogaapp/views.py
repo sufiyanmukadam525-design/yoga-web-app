@@ -84,6 +84,7 @@ def profile_view(request):
 class Base(View):
     def get(self, request):
         return render(request, 'yogaapp/base.html')
+<<<<<<< HEAD
 
 
 class ProfileEdit(View):
@@ -104,3 +105,5 @@ class ProfileEdit(View):
         return render(request, "yogaapp/profile_edit.html", {
             "form": form
         })
+=======
+>>>>>>> 378cfd2d643889c1b7f817a9487d8e62135be505
